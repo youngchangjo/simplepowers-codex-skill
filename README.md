@@ -36,10 +36,10 @@ The README and npm installer files are outside the skill folder so the skill its
 
 ## Install from private GitHub
 
-After this repo is available on GitHub, install globally with:
+For a private GitHub repository, the most reliable install path is SSH:
 
 ```bash
-npx github:youngchangjo/simplepowers-codex-skill
+npx git+ssh://git@github.com/youngchangjo/simplepowers-codex-skill.git
 ```
 
 That installs the skill to:
@@ -51,19 +51,32 @@ ${CODEX_HOME:-~/.codex}/skills/simplepowers
 To replace an existing install:
 
 ```bash
-npx github:youngchangjo/simplepowers-codex-skill --force
+npx git+ssh://git@github.com/youngchangjo/simplepowers-codex-skill.git --force
+```
+
+If your GitHub token setup supports private repo package shorthand, this may also work:
+
+```bash
+npx github:youngchangjo/simplepowers-codex-skill
 ```
 
 To install into a project-local `.agents/skills` folder:
 
 ```bash
-npx github:youngchangjo/simplepowers-codex-skill --project /path/to/your-project --force
+npx git+ssh://git@github.com/youngchangjo/simplepowers-codex-skill.git --project /path/to/your-project --force
 ```
 
 To install to an exact custom target:
 
 ```bash
-npx github:youngchangjo/simplepowers-codex-skill --target /path/to/skills/simplepowers --force
+npx git+ssh://git@github.com/youngchangjo/simplepowers-codex-skill.git --target /path/to/skills/simplepowers --force
+```
+
+You can also install the CLI globally first:
+
+```bash
+npm install -g git+ssh://git@github.com/youngchangjo/simplepowers-codex-skill.git
+simplepowers-install --force
 ```
 
 ## Install after cloning

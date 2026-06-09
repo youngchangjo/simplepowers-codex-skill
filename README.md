@@ -16,7 +16,7 @@ short request -> Execution Prompt -> confirmation -> 1/2/3 -> selected workflow 
 - Read-only review, analysis-only, and suggestion-only requests are excluded from automatic use.
 - Subagent and Computer Use QA instructions include fallback behavior.
 - `agents/openai.yaml` disables implicit invocation by default.
-- This repository is also an npm-style installer package for private GitHub installs.
+- This repository is also an npm-style installer package for public GitHub installs.
 
 ## Included files
 
@@ -34,12 +34,12 @@ README.md
 
 The README and npm installer files are outside the skill folder so the skill itself stays lean.
 
-## Install from private GitHub
+## Install from public GitHub
 
-For a private GitHub repository, the most reliable install path is SSH:
+Install globally with HTTPS:
 
 ```bash
-npx git+ssh://git@github.com/youngchangjo/simplepowers-codex-skill.git
+npx -y git+https://github.com/youngchangjo/simplepowers-codex-skill.git
 ```
 
 That installs the skill to:
@@ -51,38 +51,44 @@ ${CODEX_HOME:-~/.codex}/skills/simplepowers
 To replace an existing install:
 
 ```bash
-npx git+ssh://git@github.com/youngchangjo/simplepowers-codex-skill.git --force
+npx -y git+https://github.com/youngchangjo/simplepowers-codex-skill.git --force
 ```
 
-If your GitHub token setup supports private repo package shorthand, this may also work:
+GitHub package shorthand should also work:
 
 ```bash
-npx github:youngchangjo/simplepowers-codex-skill
+npx -y github:youngchangjo/simplepowers-codex-skill
+```
+
+This package is installed from GitHub. It is not published to the npm registry yet, so this command is not expected to work:
+
+```bash
+npx simplepowers-codex-skill
 ```
 
 To install into a project-local `.agents/skills` folder:
 
 ```bash
-npx git+ssh://git@github.com/youngchangjo/simplepowers-codex-skill.git --project /path/to/your-project --force
+npx -y git+https://github.com/youngchangjo/simplepowers-codex-skill.git --project /path/to/your-project --force
 ```
 
 To install to an exact custom target:
 
 ```bash
-npx git+ssh://git@github.com/youngchangjo/simplepowers-codex-skill.git --target /path/to/skills/simplepowers --force
+npx -y git+https://github.com/youngchangjo/simplepowers-codex-skill.git --target /path/to/skills/simplepowers --force
 ```
 
 You can also install the CLI globally first:
 
 ```bash
-npm install -g git+ssh://git@github.com/youngchangjo/simplepowers-codex-skill.git
+npm install -g git+https://github.com/youngchangjo/simplepowers-codex-skill.git
 simplepowers-install --force
 ```
 
 ## Install after cloning
 
 ```bash
-git clone git@github.com:youngchangjo/simplepowers-codex-skill.git
+git clone https://github.com/youngchangjo/simplepowers-codex-skill.git
 cd simplepowers-codex-skill
 npm install -g .
 simplepowers-install --force

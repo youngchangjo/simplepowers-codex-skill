@@ -5,7 +5,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/youngchangjo/simplepowers-codex-skill.git"
+    "url": "git+https://github.com/youngchangjo/simplepowers-codex-skill.git"
   },
   "bin": {
     "simplepowers-codex-skill": "./bin/install.mjs",
@@ -27,6 +27,5 @@
     "workflow"
   ],
   "author": "youngchangjo",
-  "license": "UNLICENSED",
-  "private": true
+  "license": "UNLICENSED"
 }

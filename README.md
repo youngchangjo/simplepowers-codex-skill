@@ -1,91 +1,128 @@
 # simplepowers
 
-`simplepowers` is a lightweight Codex Skill that turns short coding requests into confirmed Execution Prompts, then routes the work into one selected workflow.
+[![Codex Skill](https://img.shields.io/badge/Codex-Skill-111827?style=for-the-badge)](https://github.com/youngchangjo/simplepowers-codex-skill)
+[![Install with npx](https://img.shields.io/badge/install-npx-2f7d32?style=for-the-badge)](#install)
+[![GitHub](https://img.shields.io/badge/GitHub-public-2563eb?style=for-the-badge)](https://github.com/youngchangjo/simplepowers-codex-skill)
+
+**Turn short coding requests into confirmed execution prompts, then run the right workflow without loading every instruction at once.**
 
 ```text
-short request -> Execution Prompt -> confirmation -> 1/2/3 -> selected workflow reference -> validation/review
+short request -> Execution Prompt -> 1 / 2 / 3 -> selected reference only -> validated work
 ```
 
-## Highlights
+`simplepowers` is a lightweight Codex Skill for coding tasks where you want a little more discipline than "just start editing", but not a giant process framework.
 
-- `SKILL.md` is a lightweight router.
-- Mode-specific details live in `references/simple.md`, `references/full.md`, and `references/goal-loop.md`.
-- Codex reads only the selected mode reference after the user chooses `1`, `2`, or `3`.
-- Commit permission is explicit: choosing a mode does not authorize a commit.
-- Task notes are optional for mode `1`, mandatory for modes `2` and `3`.
-- Read-only review, analysis-only, and suggestion-only requests are excluded from automatic use.
-- Subagent and Computer Use QA instructions include fallback behavior.
-- `agents/openai.yaml` disables implicit invocation by default.
-- This repository is also an npm-style installer package for public GitHub installs.
+## Quick Start
 
-## Included files
-
-```text
-.agents/skills/simplepowers/
-  SKILL.md
-  agents/openai.yaml
-  references/simple.md
-  references/full.md
-  references/goal-loop.md
-bin/install.mjs
-package.json
-README.md
-```
-
-The README and npm installer files are outside the skill folder so the skill itself stays lean.
-
-## Install from public GitHub
-
-Install globally with HTTPS:
+Install globally from public GitHub:
 
 ```bash
 npx -y git+https://github.com/youngchangjo/simplepowers-codex-skill.git
 ```
 
-That installs the skill to:
+Then use it in Codex:
+
+```text
+$simplepowers 로그인 실패 메시지를 원인별로 분리해줘. 테스트도 추가하고 안전하면 커밋해줘.
+```
+
+Codex will first produce an Execution Prompt, ask you to choose a mode, and then load only the selected workflow reference.
+
+## Why
+
+Short coding prompts are fast, but they often leave too much implicit:
+
+- What exactly counts as done?
+- Which files should stay untouched?
+- Which tests or QA steps prove the change?
+- Is a commit actually allowed?
+- Should this be a quick fix or a full acceptance loop?
+
+`simplepowers` makes those decisions explicit before implementation starts.
+
+## How It Works
+
+```mermaid
+flowchart LR
+  A["Short coding request"] --> B["Execution Prompt"]
+  B --> C{"Choose mode"}
+  C -->|"1"| D["Simple workflow"]
+  C -->|"2"| E["Full workflow"]
+  C -->|"3"| F["Goal Loop workflow"]
+  D --> G["Focused validation"]
+  E --> H["Task note + review"]
+  F --> I["QA loop until pass or blocked"]
+```
+
+The main `SKILL.md` stays small. Mode-specific instructions live in:
+
+```text
+.agents/skills/simplepowers/
+  SKILL.md
+  agents/openai.yaml
+  references/
+    simple.md
+    full.md
+    goal-loop.md
+```
+
+After you choose `1`, `2`, or `3`, Codex is instructed to read only the matching reference.
+
+## Modes
+
+| Mode | Best for | Task note | Review / QA |
+| --- | --- | --- | --- |
+| `1` Simple | Focused bug fixes, small features, local refactors | Optional | Focused validation + self-review |
+| `2` Full | Broad, risky, security-sensitive, migration, API, or multi-file work | Mandatory | Slice validation + review |
+| `3` Goal Loop | UI/user-flow/acceptance work that must match the original spec | Mandatory | Validation + QA loop until pass or blocked |
+
+Mode selection does **not** authorize a commit. Commits happen only when the user requested or clearly allowed committing.
+
+## Install
+
+### Global Install
+
+```bash
+npx -y git+https://github.com/youngchangjo/simplepowers-codex-skill.git
+```
+
+Default target:
 
 ```text
 ${CODEX_HOME:-~/.codex}/skills/simplepowers
 ```
 
-To replace an existing install:
+Replace an existing install:
 
 ```bash
 npx -y git+https://github.com/youngchangjo/simplepowers-codex-skill.git --force
 ```
 
-GitHub package shorthand should also work:
+GitHub package shorthand also works:
 
 ```bash
 npx -y github:youngchangjo/simplepowers-codex-skill
 ```
 
-This package is installed from GitHub. It is not published to the npm registry yet, so this command is not expected to work:
-
-```bash
-npx simplepowers-codex-skill
-```
-
-To install into a project-local `.agents/skills` folder:
+### Project-Local Install
 
 ```bash
 npx -y git+https://github.com/youngchangjo/simplepowers-codex-skill.git --project /path/to/your-project --force
 ```
 
-To install to an exact custom target:
+Installs to:
+
+```text
+/path/to/your-project/.agents/skills/simplepowers
+```
+
+### Custom Target
 
 ```bash
 npx -y git+https://github.com/youngchangjo/simplepowers-codex-skill.git --target /path/to/skills/simplepowers --force
 ```
 
-You can also install the CLI globally first:
-
-```bash
-npm install -g git+https://github.com/youngchangjo/simplepowers-codex-skill.git
-simplepowers-install --force
-```
-
-## Install after cloning
+### Clone and Install
 
 ```bash
 git clone https://github.com/youngchangjo/simplepowers-codex-skill.git
@@ -94,39 +131,21 @@ npm install -g .
 simplepowers-install --force
 ```
 
-For project-local installation after cloning:
+This package is installed from GitHub. It is not published to the npm registry yet, so this command is not expected to work:
 
 ```bash
-simplepowers-install --project /path/to/your-project --force
+npx simplepowers-codex-skill
 ```
 
-## Manual install
+## Usage
 
-For global install, copy:
+### Normal Flow
 
 ```text
-.agents/skills/simplepowers/
+$simplepowers 견적 계산에서 배터리 용량 단위 변환 버그를 고쳐줘. 기존 API 호환성은 유지해줘.
 ```
 
-to:
-
-```text
-~/.codex/skills/simplepowers/
-```
-
-For project-local install, copy it to:
-
-```text
-your-project/.agents/skills/simplepowers/
-```
-
-## Basic usage
-
-```text
-$simplepowers 로그인 실패 메시지를 원인별로 분리해줘. 테스트도 추가하고 안전하면 커밋해줘.
-```
-
-Codex should first generate an Execution Prompt and ask:
+Expected flow:
 
 ```text
 1. Simple workflow
@@ -134,13 +153,7 @@ Codex should first generate an Execution Prompt and ask:
 3. Goal Loop workflow
 ```
 
-After selection, it should read only the matching reference:
-
-- `1` -> `references/simple.md`
-- `2` -> `references/full.md`
-- `3` -> `references/goal-loop.md`
-
-## Prompt-only usage
+### Prompt Only
 
 ```text
 $simplepowers 프롬프트만: 결제 실패 케이스를 정리하고 테스트 추가하는 작업 프롬프트 만들어줘.
@@ -148,7 +161,7 @@ $simplepowers 프롬프트만: 결제 실패 케이스를 정리하고 테스트
 
 This produces the Execution Prompt only and does not edit files.
 
-## Direct execution
+### Direct Execution
 
 ```text
 $simplepowers use mode 1 and execute: 작은 오타 수정하고 테스트 확인해줘.
@@ -162,26 +175,34 @@ $simplepowers use mode 2 and execute: 인증 리팩터링을 슬라이스별로 
 $simplepowers use mode 3 and execute: 새 견적 플로우가 처음 사양대로 동작할 때까지 구현, QA, 개선을 반복해줘.
 ```
 
-## Mode guide
+## Safety Rules
 
-- `1 Simple`: everyday focused tasks; task note optional
-- `2 Full`: broad, risky, security-sensitive, migration, or multi-file work; task note mandatory
-- `3 Goal Loop`: UI/user-flow/acceptance work that needs repeated QA against the original spec; task note mandatory
+`simplepowers` is intentionally conservative:
 
-## Commit policy
+- no edits before prompt confirmation unless direct execution is requested
+- no production dependencies without approval
+- no unrelated refactors
+- no unrelated user changes staged
+- no commit unless the user requested or clearly allowed it
+- skipped validation must be reported with a reason
 
-`simplepowers` commits only when:
+## Commands
 
-- the user requested or clearly allowed committing
-- validation passed or skipped checks are documented
-- unrelated user changes are not staged
-- the final diff is scoped to the request
+```bash
+simplepowers-install --help
+```
 
-Selecting `1`, `2`, or `3` is not commit permission.
+```text
+--global              Install to ${CODEX_HOME:-~/.codex}/skills/simplepowers
+--project <path>      Install to <path>/.agents/skills/simplepowers
+--target <path>       Install to an exact target directory
+--force               Replace an existing target directory
+--dry-run             Print what would be installed
+```
 
 ## Development
 
-Validate the skill:
+Validate the installer:
 
 ```bash
 npm run validate
@@ -192,3 +213,7 @@ Preview npm package contents:
 ```bash
 npm run pack:dry
 ```
+
+## License
+
+No open-source license has been selected yet. The repository is public for installation and inspection, but reuse rights are not granted beyond what GitHub access permits.

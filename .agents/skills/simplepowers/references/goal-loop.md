@@ -83,7 +83,7 @@ Do not skip the note merely because it creates repository noise. Instead, keep i
 6. Identify gaps between actual behavior and the Execution Prompt.
 7. If material gaps exist, create the next smallest improvement slice.
 8. Repeat implementation -> validation -> QA -> gap analysis until pass, blocker, or iteration cap.
-9. Run final verification, review, and commit steps only after acceptance is resolved.
+9. Run final verification, review, and mandatory commit steps only after acceptance is resolved.
 
 ## Iteration Cap
 
@@ -181,6 +181,7 @@ Stop with `pass` only when:
 - Computer Use or equivalent QA finds no material mismatch
 - self-review and subagent review do not identify unresolved critical or major issues
 - final diff remains scoped to the original request
+- mandatory commit is created when the shared commit rules allow it
 
 Stop with `blocked` only when:
 
@@ -188,5 +189,6 @@ Stop with `blocked` only when:
 - the local project cannot run for reasons unrelated to this task
 - the task requires a product decision or destructive change that needs user approval
 - repeated validation exposes an upstream issue outside the requested scope
+- commit cannot be created safely because relevant changes cannot be separated from unrelated user changes or another Git blocker exists
 
-When blocked, report what was completed, what could not be verified, the exact blocker, and the next command or user action needed.
+When blocked, report what was completed, what could not be verified, whether the mandatory commit was created, the exact blocker, and the next command or user action needed.

@@ -24,7 +24,7 @@ If the task becomes broad, risky, migration-related, security-sensitive, or touc
 4. Implement in 1-3 slices.
 5. Run focused validation after meaningful changes or at the end.
 6. Self-review the final diff.
-7. Commit only if the shared commit rules allow it.
+7. Create the mandatory commit when the shared commit rules allow it.
 
 Do not re-confirm the prompt unless there is a blocking ambiguity.
 
@@ -88,6 +88,6 @@ Finish when:
 - the requested change is implemented
 - focused validation passes or skipped checks are justified
 - self-review finds no unresolved material issue
-- final response clearly reports validation, QA, review, and commit status
+- final response clearly reports validation, QA, review, and mandatory commit status
 
-Stop as blocked only when a real environment, credential, dependency, or product-decision blocker prevents completion.
+Stop as blocked when a real environment, credential, dependency, product-decision, or commit-safety blocker prevents completion.

@@ -35,7 +35,7 @@ Short coding prompts are fast, but they often leave too much implicit:
 - What exactly counts as done?
 - Which files should stay untouched?
 - Which tests or QA steps prove the change?
-- Is a commit actually allowed?
+- Will the work produce a commit?
 - Should this be a quick fix or a full acceptance loop?
 
 `simplepowers` makes those decisions explicit before implementation starts.
@@ -70,13 +70,15 @@ After you choose `1`, `2`, or `3`, Codex is instructed to read only the matching
 
 ## Modes
 
-| Mode | Best for | Task note | Review / QA |
-| --- | --- | --- | --- |
-| `1` Simple | Focused bug fixes, small features, local refactors | Optional | Focused validation + self-review |
-| `2` Full | Broad, risky, security-sensitive, migration, API, or multi-file work | Mandatory | Slice validation + review |
-| `3` Goal Loop | UI/user-flow/acceptance work that must match the original spec | Mandatory | Validation + QA loop until pass or blocked |
+| Mode | Best for | Task note | Commit | Review / QA |
+| --- | --- | --- | --- | --- |
+| `1` Simple | Focused bug fixes, small features, local refactors | Optional | Mandatory when files change | Focused validation + self-review |
+| `2` Full | Broad, risky, security-sensitive, migration, API, or multi-file work | Mandatory | Mandatory when files change | Slice validation + review |
+| `3` Goal Loop | UI/user-flow/acceptance work that must match the original spec | Mandatory | Mandatory after acceptance passes | Validation + QA loop until pass or blocked |
 
-Mode selection does **not** authorize a commit. Commits happen only when the user requested or clearly allowed committing.
+simplepowers is a commit-producing workflow. Confirming the Execution Prompt, choosing `1`, `2`, or `3`, or using direct execution authorizes a commit for relevant task changes.
+
+If a safe commit cannot be created, the workflow should stop as `blocked` and report the exact blocker instead of silently skipping the commit.
 
 ## Install
 
@@ -183,7 +185,8 @@ $simplepowers use mode 3 and execute: 새 견적 플로우가 처음 사양대�
 - no production dependencies without approval
 - no unrelated refactors
 - no unrelated user changes staged
-- no commit unless the user requested or clearly allowed it
+- mandatory commit for relevant task changes in Git repositories
+- blocked result instead of silent commit skip when commit safety cannot be proven
 - skipped validation must be reported with a reason
 
 ## Commands

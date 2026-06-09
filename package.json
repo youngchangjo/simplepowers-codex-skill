@@ -1,6 +1,6 @@
 {
   "name": "simplepowers-codex-skill",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Install the simplepowers Codex skill with a lightweight npm-style CLI.",
   "type": "module",
   "repository": {

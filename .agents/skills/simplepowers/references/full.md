@@ -56,7 +56,7 @@ Suggested note shape:
 - [ ] Relevant tests pass
 - [ ] Diff reviewed
 - [ ] Subagent review completed or skipped with reason
-- [ ] Commit created or skipped with reason
+- [ ] Mandatory commit created or blocked with reason
 
 ## Plan
 1. Slice 1: ...
@@ -158,6 +158,6 @@ Finish when:
 - focused and relevant checks pass or skips are justified
 - review has no unresolved critical or major issue
 - final diff remains scoped
-- commit is created only when shared commit rules allow it
+- mandatory commit is created when shared commit rules allow it
 
-Stop as blocked only when a real external or product-decision blocker prevents progress.
+Stop as blocked when a real external, product-decision, validation, or commit-safety blocker prevents progress.

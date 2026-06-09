@@ -43,7 +43,9 @@ Ask the user to choose one mode unless prompt-only or direct execution mode appl
 2. `Full workflow`: broader traceability, task note when useful, slice validation, optional subagent review.
 3. `Goal Loop workflow`: Full workflow plus acceptance loop until the original success criteria pass or a real blocker is proven.
 
-Mode selection does not grant commit permission. Commit only when the user requested or clearly allowed committing.
+simplepowers is a commit-producing workflow. Once the user confirms the Execution Prompt, selects a mode, or requests direct execution, that confirmation counts as commit permission for relevant task changes.
+
+If the task changes files in a Git repository and no safety blocker remains, creating a commit is mandatory.
 
 ## Prompt-Only Mode
 
@@ -74,7 +76,7 @@ Before changing project files, perform only read-only investigation:
 
 Do not create task notes before confirmation unless direct execution mode applies.
 
-If the project is not a Git repository, continue after confirmation and report that commit was skipped.
+If the project is not a Git repository, continue after confirmation and report that commit is impossible because there is no Git repository.
 
 ## Execution Prompt
 
@@ -138,9 +140,9 @@ Use this format:
 - Record skipped checks with reasons.
 
 ## Commit plan
-- Commit only when safe and explicitly requested or clearly allowed.
+- Commit relevant task changes when safe; this is mandatory for simplepowers work in Git repositories.
 - Stage only relevant files.
-- Use a concise Conventional Commit-style message when committing.
+- Use a concise Conventional Commit-style message.
 ```
 
 Keep the prompt detailed enough to guide the work, but not bureaucratic.
@@ -159,7 +161,7 @@ When asking the user to confirm, use this format:
 2. Full workflow - 문서화, 슬라이스별 검증, 서브에이전트 리뷰 가능, 최종 검증
 3. Goal Loop workflow - 2번 기반 + 사양 충족까지 반복 구현/QA/개선
 
-커밋은 별도 요청 또는 명확한 허용이 있을 때만 진행합니다.
+simplepowers 확인 또는 모드 선택은 관련 변경 커밋까지 허용한 것으로 간주합니다.
 수정할 내용이 있으면 `수정: ...` 형태로 적어주세요.
 ```
 
@@ -200,23 +202,22 @@ These rules apply to every selected reference:
 - Ask before destructive changes, production dependency additions, migrations, or security-sensitive product decisions.
 - If subagents are unavailable, perform the same review checklist as self-review and record that subagent review was skipped.
 - If Computer Use or browser QA is unavailable, use the strongest practical CLI/API/test/log/manual alternative and record the limitation.
-- If touched files contain unrelated user changes, stage only relevant hunks or skip commit.
+- If touched files contain unrelated user changes, stage only relevant hunks. If relevant hunks cannot be separated safely, stop as blocked and ask for direction.
 
-## Commit Rules
+## Mandatory Commit Rules
 
-Commit only if all are true:
+For simplepowers work, commit is mandatory when all are true:
 
 - this is a Git repository
 - the task changed files
 - changes are relevant to the user request
-- validation passed, or skipped validation is documented with reasons
+- validation passed, or unavailable checks are documented with reasons and there is no known failing check
 - unrelated user changes are not staged
-- the user requested or clearly allowed committing
-- in Goal Loop mode, acceptance criteria are satisfied or the user explicitly requested a commit despite a documented blocker
+- in Goal Loop mode, acceptance criteria are satisfied
 
-Mode selection alone is not commit permission.
+The user's simplepowers confirmation, mode selection, or direct-execution request is commit permission for relevant task changes.
 
-If commit is unsafe, do not commit. Explain why and provide a suggested command only if useful.
+If commit is unsafe, do not silently skip it. Stop as `blocked`, explain the exact blocker, and report the smallest user action needed to unblock the mandatory commit.
 
 ## Final Response
 
@@ -240,7 +241,7 @@ Keep the final response concise:
 - <self-review/subagent summary or skipped reason>
 
 ## Commit
-- <commit hash or skipped reason>
+- <commit hash or blocked reason>
 
 ## Notes
 - <risks, assumptions, blockers, or follow-up>

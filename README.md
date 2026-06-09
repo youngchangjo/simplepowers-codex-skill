@@ -74,11 +74,13 @@ After you choose `1`, `2`, or `3`, Codex is instructed to read only the matching
 | --- | --- | --- | --- | --- |
 | `1` Simple | Focused bug fixes, small features, local refactors | Optional | Mandatory when files change | Focused validation + self-review |
 | `2` Full | Broad, risky, security-sensitive, migration, API, or multi-file work | Mandatory | Mandatory when files change | Slice validation + review |
-| `3` Goal Loop | UI/user-flow/acceptance work that must match the original spec | Mandatory | Mandatory after acceptance passes | Validation + QA loop until pass or blocked |
+| `3` Goal Loop | UI/user-flow/acceptance work that must match the original spec | Mandatory loop state file | Mandatory after acceptance passes | Validation + independent QA loop until pass or blocked |
 
 simplepowers is a commit-producing workflow. Confirming the Execution Prompt, choosing `1`, `2`, or `3`, or using direct execution authorizes a commit for relevant task changes.
 
 If a safe commit cannot be created, the workflow should stop as `blocked` and report the exact blocker instead of silently skipping the commit.
+
+Mode `3` treats the task note as durable loop state: what was tried, what passed, what remains open, the next slice, and why the final result satisfies the original goal. For larger or parallel work it can also use worktree isolation and connector handoff when those tools are available.
 
 ## Install
 

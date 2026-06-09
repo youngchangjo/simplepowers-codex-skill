@@ -39,6 +39,18 @@ If a goal tool is not available, add the statement to the mandatory task note.
 
 The Active Goal is the loop's source of truth.
 
+## Loop Input
+
+Before implementation, classify how this Goal Loop was started:
+
+- direct user request
+- automation or scheduled triage
+- CI/test failure
+- issue, PR, or ticket
+- previous blocked loop resume
+
+Record the source in the task note. If the loop was started by automation or triage, write the finding, priority, and next action clearly enough that a human can review it without reading the whole transcript.
+
 ## Task Note
 
 Task notes are mandatory in Goal Loop workflow.
@@ -62,32 +74,75 @@ Use a Full workflow-style task note plus:
 - [ ] <criterion 2>
 - [ ] <criterion 3>
 
+## Loop state
+### Tried
+- ...
+
+### Passed
+- ...
+
+### Still open
+- ...
+
+### Next slice
+- ...
+
+### Decision history
+- ...
+
 ## QA loop
 ### Iteration 1
 - Build/implementation result:
 - Test result:
 - Computer Use or equivalent QA result:
 - Gap against original spec:
+- Cost/value check:
 - Decision: pass / improve / blocked
 ```
 
+Treat the task note as the loop's durable state file, not just a log. After every iteration, update what was tried, what passed, what remains open, and the next smallest slice.
+
 Do not skip the note merely because it creates repository noise. Instead, keep it local unless the user asks to commit it or the repository clearly treats `.codex/simplepowers/` notes as committed artifacts.
+
+## Isolation And Handoff
+
+Use the current checkout for ordinary single-agent Mode 3 work.
+
+Use a separate worktree, with its own branch when practical, if:
+
+- multiple agents may edit files in parallel
+- implementation and verification need separate checkouts
+- the task is broad enough that collisions with user work are likely
+- automation starts several loops from the same repository
+
+When a connector is available and relevant, update the external source of truth after acceptance is resolved. Examples include issue status, PR notes, CI failure summary, or ticket comments. If no connector is available, record the intended handoff in the task note and final response.
 
 ## Execution Flow
 
 1. Confirm the Execution Prompt is available.
-2. Establish the Active Goal and acceptance checklist.
-3. Implement the first slice.
-4. Run focused validation.
-5. Run QA against the original success criteria.
-6. Identify gaps between actual behavior and the Execution Prompt.
-7. If material gaps exist, create the next smallest improvement slice.
-8. Repeat implementation -> validation -> QA -> gap analysis until pass, blocker, or iteration cap.
-9. Run final verification, review, and mandatory commit steps only after acceptance is resolved.
+2. Classify the loop input and record it in the task note.
+3. Establish the Active Goal and acceptance checklist.
+4. Decide whether worktree/branch isolation is needed.
+5. Implement the first slice.
+6. Run focused validation.
+7. Run QA against the original success criteria.
+8. Identify gaps between actual behavior and the Execution Prompt.
+9. Update the task note's loop state.
+10. If material gaps exist, create the next smallest improvement slice.
+11. Repeat implementation -> validation -> QA -> gap analysis until pass, blocker, or iteration cap.
+12. Run final verification, review, connector handoff when relevant, and mandatory commit steps only after acceptance is resolved.
 
 ## Iteration Cap
 
 Default to 3 QA/improvement iterations.
+
+After every iteration, record a cost/value check:
+
+- Is the next slice small and clearly connected to the original success criteria?
+- Is one more loop likely to close a material gap?
+- Is the task drifting into new scope, unclear requirements, or diminishing returns?
+
+Continue only when the next slice has a clear acceptance benefit.
 
 After 3 iterations, if material gaps remain:
 
@@ -141,7 +196,9 @@ If the answer shows a meaningful gap, do not finalize. Improve or report a real 
 
 ## Review
 
-Use subagent review by default for Mode 3 unless the change remains small and obviously low-risk.
+Keep the maker and checker separate in Mode 3 whenever subagents are available.
+
+Use a QA acceptance reviewer by default. A separate reviewer may be skipped only when the task is small, low-risk, and the final acceptance evidence is straightforward.
 
 Recommended reviewer angles:
 
@@ -168,9 +225,18 @@ Ask the QA acceptance reviewer to compare final behavior against the Execution P
 pass / needs changes / blocked
 ```
 
-If subagents are unavailable, run the same acceptance checklist yourself and record the skipped subagent review reason.
+If subagents are unavailable, run a separate self-check pass from the task note and Execution Prompt after implementation is complete. Do not rely on the implementation pass alone. Record the skipped subagent review reason.
 
 Fix material gaps before finalizing.
+
+## Comprehension Checkpoint
+
+Before finalizing, write a compact checkpoint in the task note and final response:
+
+- what changed
+- why it satisfies the original goal
+- what evidence proves it
+- what a human should personally review if risk remains
 
 ## Stop Conditions
 
@@ -179,8 +245,10 @@ Stop with `pass` only when:
 - all acceptance checklist items pass
 - relevant tests/checks pass or skipped checks have justified reasons
 - Computer Use or equivalent QA finds no material mismatch
-- self-review and subagent review do not identify unresolved critical or major issues
+- self-review and separate checker review, or the recorded separate self-check pass when subagents are unavailable, do not identify unresolved critical or major issues
 - final diff remains scoped to the original request
+- task note loop state is updated with final tried/passed/open status
+- comprehension checkpoint is written
 - mandatory commit is created when the shared commit rules allow it
 
 Stop with `blocked` only when:

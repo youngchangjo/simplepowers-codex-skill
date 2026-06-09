@@ -190,6 +190,7 @@ Mode 2 Full and Mode 3 Goal Loop:
 - Before editing project files, create or update `.codex/simplepowers/YYYY-MM-DD-<short-task-name>.md`.
 - If that path is not writable, create an equivalent note in the nearest writable task/work directory and report the path.
 - Keep the confirmed Execution Prompt, selected mode, implementation slices, validation log, review notes, QA results, and final result in the note.
+- For Mode 3, also keep durable loop state: input source, tried work, passed checks, open gaps, next slice, decision history, and final comprehension checkpoint.
 
 Do not commit task notes unless it is clearly appropriate for the repository or the user asks.
 
@@ -239,6 +240,9 @@ Keep the final response concise:
 
 ## Review
 - <self-review/subagent summary or skipped reason>
+
+## Human Review
+- <what changed, why it satisfies the goal, and what a human should personally review if risk remains>
 
 ## Commit
 - <commit hash or blocked reason>

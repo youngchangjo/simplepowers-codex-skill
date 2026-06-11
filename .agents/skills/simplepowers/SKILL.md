@@ -5,12 +5,12 @@ description: Prompt compiler and workflow router for non-trivial coding tasks wh
 
 # simplepowers
 
-simplepowers turns a short coding request into a confirmed Execution Prompt, asks the user to choose a workflow level, then loads only the selected workflow reference.
+simplepowers turns a short coding request into a clarified and confirmed Execution Prompt, asks the user to choose a workflow level, then loads only the selected workflow reference.
 
 Core flow:
 
 ```text
-short request -> Execution Prompt -> user confirmation -> 1/2/3 mode -> selected reference only -> implementation/validation/review
+short request -> spec clarification -> Execution Prompt -> user confirmation -> 1/2/3 mode -> selected reference only -> implementation/validation/review
 ```
 
 Keep this skill lightweight. Do not preload all workflow details.
@@ -35,6 +35,49 @@ Do not use this skill for:
 
 If the user asks for read-only review, review the code directly and do not run this workflow.
 
+## Spec Clarification
+
+Before writing the Execution Prompt, ask a compact clarification block unless Direct Execution Mode applies or the user explicitly says to skip questions.
+
+The clarification block should:
+
+- ask only questions that materially change the Execution Prompt
+- include at most 3 questions
+- give each question numbered options `1`, `2`, and `3` when useful
+- include `0` as "skip this and continue with Codex's safest reasonable assumption"
+- allow a bare `0` response to skip all clarification and continue to the Execution Prompt
+- avoid free-form questions unless the task has a blocker that cannot be represented as options
+
+Use this format:
+
+```md
+## 사양 구체화
+
+Execution Prompt를 작성하기 전에 결정하면 좋은 항목입니다.
+번호로 답해주세요. `0`은 기본 추정으로 바로 다음 단계로 진행합니다.
+
+1. <clarification question>
+   0. 기본 추정으로 진행
+   1. <option>
+   2. <option>
+   3. <option>
+
+2. <clarification question>
+   0. 기본 추정으로 진행
+   1. <option>
+   2. <option>
+   3. <option>
+
+답변 예시: `1:2, 2:0` 또는 `0`
+```
+
+After the user replies:
+
+- If the user replies `0`, generate the Execution Prompt with explicit assumptions.
+- If the user selects numbered options, incorporate those choices into the Execution Prompt's Goal, Success criteria, Constraints, Assumptions, Investigation plan, and QA plan.
+- If the user gives revision instructions instead of option numbers, treat them as clarification input and generate or revise the Execution Prompt accordingly.
+- Do not ask another clarification round unless the answer creates a real blocker or materially changes the task.
+
 ## Modes
 
 Ask the user to choose one mode unless prompt-only or direct execution mode applies:
@@ -51,10 +94,11 @@ If the task changes files in a Git repository and no safety blocker remains, cre
 
 If the user says `프롬프트만`, `prompt only`, `실행하지 말고 프롬프트만`, `just generate the prompt`, or equivalent:
 
-1. Generate the Execution Prompt.
-2. Include the mode choice block if useful.
-3. Stop.
-4. Do not edit files.
+1. Run Spec Clarification unless the user explicitly says to skip questions.
+2. Generate the Execution Prompt.
+3. Include the mode choice block if useful.
+4. Stop.
+5. Do not edit files.
 
 ## Direct Execution Mode
 
@@ -65,6 +109,8 @@ If the user explicitly says to skip confirmation, for example `바로 실행`, `
 3. Load only the selected reference.
 4. Execute without another confirmation.
 
+Do not run Spec Clarification in Direct Execution Mode unless the request has a blocker that would make implementation unsafe.
+
 ## Before Confirmation
 
 Before changing project files, perform only read-only investigation:
@@ -72,6 +118,7 @@ Before changing project files, perform only read-only investigation:
 - inspect relevant files, docs, configs, tests, and scripts
 - check git status and branch when the project is a Git repository
 - identify likely validation commands
+- ask Spec Clarification questions when required by this skill
 - generate or revise the Execution Prompt
 
 Do not create task notes before confirmation unless direct execution mode applies.

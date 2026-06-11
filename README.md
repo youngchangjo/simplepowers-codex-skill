@@ -4,10 +4,10 @@
 [![Install with npx](https://img.shields.io/badge/install-npx-2f7d32?style=for-the-badge)](#install)
 [![GitHub](https://img.shields.io/badge/GitHub-public-2563eb?style=for-the-badge)](https://github.com/youngchangjo/simplepowers-codex-skill)
 
-**Turn short coding requests into confirmed execution prompts, then run the right workflow without loading every instruction at once.**
+**Turn short coding requests into clarified execution prompts, then run the right workflow without loading every instruction at once.**
 
 ```text
-short request -> Execution Prompt -> 1 / 2 / 3 -> selected reference only -> validated work
+short request -> 0 / 1 / 2 / 3 spec choices -> Execution Prompt -> 1 / 2 / 3 workflow -> selected reference only -> validated work
 ```
 
 `simplepowers` is a lightweight Codex Skill for coding tasks where you want a little more discipline than "just start editing", but not a giant process framework.
@@ -26,7 +26,7 @@ Then use it in Codex:
 $simplepowers 로그인 실패 메시지를 원인별로 분리해줘. 테스트도 추가하고 안전하면 커밋해줘.
 ```
 
-Codex will first produce an Execution Prompt, ask you to choose a mode, and then load only the selected workflow reference.
+Codex first asks a compact numbered clarification block. Choose `1`, `2`, or `3` for useful spec decisions, or answer `0` to skip clarification and continue with Codex's safest reasonable assumptions. Codex then produces an Execution Prompt, asks you to choose a workflow mode, and loads only the selected workflow reference.
 
 ## Why
 
@@ -44,14 +44,16 @@ Short coding prompts are fast, but they often leave too much implicit:
 
 ```mermaid
 flowchart LR
-  A["Short coding request"] --> B["Execution Prompt"]
-  B --> C{"Choose mode"}
-  C -->|"1"| D["Simple workflow"]
-  C -->|"2"| E["Full workflow"]
-  C -->|"3"| F["Goal Loop workflow"]
-  D --> G["Focused validation"]
-  E --> H["Task note + review"]
-  F --> I["QA loop until pass or blocked"]
+  A["Short coding request"] --> B{"Clarify spec"}
+  B -->|"0 skip"| C["Execution Prompt"]
+  B -->|"1 / 2 / 3 choices"| C
+  C --> D{"Choose workflow"}
+  D -->|"1"| E["Simple workflow"]
+  D -->|"2"| F["Full workflow"]
+  D -->|"3"| G["Goal Loop workflow"]
+  E --> H["Focused validation"]
+  F --> I["Task note + review"]
+  G --> J["QA loop until pass or blocked"]
 ```
 
 The main `SKILL.md` stays small. Mode-specific instructions live in:
@@ -66,7 +68,7 @@ The main `SKILL.md` stays small. Mode-specific instructions live in:
     goal-loop.md
 ```
 
-After you choose `1`, `2`, or `3`, Codex is instructed to read only the matching reference.
+After the spec clarification and Execution Prompt confirmation, choose workflow `1`, `2`, or `3`. Codex is instructed to read only the matching reference.
 
 ## Modes
 
@@ -152,6 +154,13 @@ $simplepowers 견적 계산에서 배터리 용량 단위 변환 버그를 고�
 Expected flow:
 
 ```text
+Spec clarification:
+0. Skip spec clarification and continue to the Execution Prompt
+1. Choose a clarification option when it affects the spec
+2. Choose a clarification option when it affects the spec
+3. Choose a clarification option when it affects the spec
+
+Workflow selection:
 1. Simple workflow
 2. Full workflow
 3. Goal Loop workflow

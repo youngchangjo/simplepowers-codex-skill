@@ -1,6 +1,6 @@
 interface:
   display_name: "Simplepowers"
-  short_description: "Turn short coding asks into confirmed workflows"
-  default_prompt: "Use $simplepowers to turn this coding request into a confirmed Execution Prompt before implementation."
+  short_description: "Turn short coding asks into clarified workflows"
+  default_prompt: "Use $simplepowers to clarify this coding request into a confirmed Execution Prompt before implementation."
 policy:
   allow_implicit_invocation: false
